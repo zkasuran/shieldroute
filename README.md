@@ -53,10 +53,25 @@ script/
   Deploy.s.sol                  deploys router + demo pair + pool to Mantle Sepolia
 test/
   ShieldRouter.t.sol            9 tests, full lifecycle + MEV-protection proof
+agent/
+  src/scorer.ts                 AI MEV risk scorer: scores a swap, recommends routing
+  src/cli.ts                    `shieldroute score ...` CLI
+  test/scorer.test.ts           9 tests on the scoring model
 ```
 
 `ShieldRouter` settles against any `IBatchPool`. The mock constant-product pool is for
 tests and the demo; in production this is an adapter over a real Mantle DEX.
+
+## The AI layer
+
+`agent/` is the decision layer an autonomous Mantle trading agent calls before each swap.
+`scoreSwap(swap, pool)` returns a 0-100 MEV risk score and a routing recommendation
+(direct / batch / split), built from explainable on-chain math: the exact
+constant-product sandwich loss, pool depth, and recent volatility. Low-risk trades go
+direct (no batching overhead); risky trades route through a ShieldRoute batch; severe,
+oversized trades split across batches. Every input's contribution is returned in the
+score breakdown, so the routing decision is auditable rather than a black box. See
+`agent/README.md`.
 
 ## Build and test
 
@@ -105,9 +120,8 @@ Filled in after the human runs the deploy:
 This is an MVP. The commit-reveal batch and the uniform-clearing-price settlement are
 real and tested. The pool is a mock constant-product curve so the batch has something to
 price the residual against in tests and the demo; a production deployment swaps in an
-adapter over a live Mantle DEX. The AI risk-scoring layer (predict per-trade MEV
-exposure and choose batch vs direct routing) is the next milestone and is not in this
-contract.
+adapter over a live Mantle DEX. The AI risk-scoring layer in `agent/` is built and
+tested; connecting it to live Mantle pool reserves over RPC is the next milestone.
 
 ## AI disclosure
 
