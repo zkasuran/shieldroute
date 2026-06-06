@@ -1,0 +1,26 @@
+{
+  "name": "shieldroute-agent",
+  "version": "0.1.0",
+  "description": "MEV risk scorer and routing advisor for ShieldRoute on Mantle. Scores a swap's sandwich exposure and recommends batch vs direct execution.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "shieldroute": "dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --import tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "score": "node --import tsx src/cli.ts"
+  },
+  "engines": { "node": ">=18" },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "@types/node": "^22.9.0"
+  }
+}
