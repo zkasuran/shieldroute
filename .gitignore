@@ -3,3 +3,5 @@ cache/
 broadcast/
 .env
 *.log
+SUBMIT.md
+DEMO-VIDEO-SCRIPT.md
